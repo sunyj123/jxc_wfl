@@ -36,7 +36,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">确认密码</label>
                 <div class="layui-input-block">
-                    <input type="password" name="again_password" lay-verify="required" lay-reqtext="新的密码不能为空"
+                    <input type="password" name="again_password" lay-verify="required" lay-reqtext="确认密码不能为空"
                            placeholder="确认密码" value="" class="layui-input">
                 </div>
             </div>

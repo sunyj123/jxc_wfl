@@ -31,4 +31,6 @@ public interface IUserService extends IService<User> {
     public User findUserByUserName(String userName);
 
     void updateUserInfo(User user);
+
+    void updatepassword(String oldpassword,String newpassword,String confirpassword,User user);
 }

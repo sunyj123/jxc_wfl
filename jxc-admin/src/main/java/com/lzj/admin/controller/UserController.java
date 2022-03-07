@@ -7,6 +7,7 @@ import com.lzj.admin.pojo.User;
 import com.lzj.admin.service.IUserService;
 import com.lzj.admin.utils.AssertUtil;
 import com.lzj.admin.utils.StringUtil;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -59,5 +60,18 @@ public class UserController {
 
             userService.updateUserInfo(user);
             return RespBean.success("用户信息更新成功!");
-        }
+    }
+
+    @RequestMapping("password")
+    public String password(){
+        return "user/password";
+    }
+
+    @RequestMapping("updateUserPassword")
+    @ResponseBody
+    public RespBean updatePassword(String oldPassword, String newPassword, String confirmPassword, HttpSession session){
+        User user = (User) session.getAttribute("user");
+        userService.updatepassword(oldPassword,newPassword,confirmPassword,user);
+        return RespBean.success("用户密码更新成功！");
+    }
 }

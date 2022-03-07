@@ -1,6 +1,7 @@
 package com.lzj.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lzj.admin.exceptions.ParamsException;
 import com.lzj.admin.pojo.User;
 import com.lzj.admin.mapper.UserMapper;
 import com.lzj.admin.service.IUserService;
@@ -61,4 +62,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         AssertUtil.isTrue(!(this.updateById(user)),"用户信息更新失败!");
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void updatepassword(String oldpassword, String newpassword, String confirpassword,User user) {
+        //如果原密码输入错误，修改失败
+        if (!user.getPassword().equals(oldpassword)){
+            throw new ParamsException("原密码输入错误，修改失败!");
+        }
+        //如果确认密码和新密码不匹配，修改失败
+        if (!newpassword.equals(confirpassword)){
+            throw new ParamsException("确认密码与新密码不一致,请核对!");
+        }
+        //修改成功
+        user.setPassword(newpassword);
+        this.saveOrUpdate(user);
+    }
 }
