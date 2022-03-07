@@ -33,16 +33,10 @@ public class UserController {
     //最终响应的是json
     @ResponseBody
     public RespBean login(String userName,String password,HttpSession session){
-        try {
+
             User user = userService.login(userName, password);
             session.setAttribute("user",user);
             return RespBean.success("用户登录成功!");
-        } catch (ParamsException e) {
-            e.printStackTrace();
-            return RespBean.error(e.getMsg());
-        }catch (Exception e){
-            return RespBean.error("用户登录失败!");
-        }
     }
 
     /**
@@ -62,15 +56,8 @@ public class UserController {
     @RequestMapping("updateUserInfo")
     @ResponseBody
     public RespBean updateUserInfo(User user){
-        try {
+
             userService.updateUserInfo(user);
             return RespBean.success("用户信息更新成功!");
-        } catch (ParamsException e) {
-            e.printStackTrace();
-            return RespBean.error(e.getMsg());
-        } catch (Exception e){
-            e.printStackTrace();
-            return RespBean.error("用户信息更新失败!");
         }
-    }
 }
