@@ -18,5 +18,3 @@ public class JxcAdminApplication {
         SpringApplication.run(JxcAdminApplication.class, args);
     }
 }
-a
-a
