@@ -8,6 +8,7 @@ import com.lzj.admin.service.IUserService;
 import com.lzj.admin.utils.AssertUtil;
 import com.lzj.admin.utils.StringUtil;
 import org.springframework.http.HttpRequest;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 /**
  * <p>
@@ -30,22 +32,14 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    @RequestMapping("login")
-    //最终响应的是json
-    @ResponseBody
-    public RespBean login(String userName,String password,HttpSession session){
-
-            User user = userService.login(userName, password);
-            session.setAttribute("user",user);
-            return RespBean.success("用户登录成功!");
-    }
-
     /**
      * 用户信息设置页面
      * @return
      */
     @RequestMapping("setting")
-    public String setting(){
+    public String setting(Principal principal, Model model){
+        User user = userService.findUserByUserName(principal.getName());
+        model.addAttribute(user);
         return "user/setting";
     }
 
@@ -67,10 +61,18 @@ public class UserController {
         return "user/password";
     }
 
+    /**
+     *
+     * @param oldPassword
+     * @param newPassword
+     * @param confirmPassword
+     * @param principal springSecurity自带的
+     * @return
+     */
     @RequestMapping("updateUserPassword")
     @ResponseBody
-    public RespBean updatePassword(String oldPassword, String newPassword, String confirmPassword, HttpSession session){
-        User user = (User) session.getAttribute("user");
+    public RespBean updatePassword(String oldPassword, String newPassword, String confirmPassword, Principal principal){
+        User user =userService.findUserByUserName(principal.getName());
         userService.updatepassword(oldPassword,newPassword,confirmPassword,user);
         return RespBean.success("用户密码更新成功！");
     }
