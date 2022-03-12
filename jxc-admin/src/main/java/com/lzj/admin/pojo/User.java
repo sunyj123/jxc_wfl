@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,6 +52,9 @@ public class User implements Serializable, UserDetails {
 
     @ApiModelProperty(value = "是否删除")
     private Integer isDel;
+
+    @TableField(exist = false)
+    private String roleIds;
 
     @TableField(exist = false)
     Collection<? extends GrantedAuthority> authorities;
