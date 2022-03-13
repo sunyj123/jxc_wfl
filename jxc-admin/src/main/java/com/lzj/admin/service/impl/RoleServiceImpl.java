@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lzj.admin.pojo.Role;
 import com.lzj.admin.mapper.RoleMapper;
+import com.lzj.admin.pojo.RoleMenu;
 import com.lzj.admin.pojo.User;
 import com.lzj.admin.pojo.UserRole;
 import com.lzj.admin.query.RoleQuery;
+import com.lzj.admin.service.IRoleMenuService;
 import com.lzj.admin.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lzj.admin.service.IUserRoleService;
@@ -36,6 +38,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Resource
     private IUserRoleService userRoleService;
+    @Resource
+    private IRoleMenuService roleMenuService;
 
     @Override
     public Role findRoleByRoleName(String roleName) {
@@ -99,5 +103,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public List<Map<String, Object>> queryAllRoles(Integer userId) {
         return this.baseMapper.queryAllRoles(userId);
+    }
+
+    @Override
+    public void addGrant(Integer[] mids, Integer roleId) {
+        //同样的，为了避免更新权限时，涉及到频繁的添加删除权限操作，
+        // 统一设定为在添加/修改之前将当前角色所含有的权限全部删除
+        int count = roleMenuService.count(new QueryWrapper<RoleMenu>().eq("role_id", roleId));
+        //这个判断主要避免当数据为空时，执行删除报错。
+        if (count>0){
+            AssertUtil.isTrue(!(roleMenuService.remove(new QueryWrapper<RoleMenu>().eq("role_id",roleId))),"权限信息删除失败!");
+        }
+        AssertUtil.isTrue((mids.length <0 || mids == null),"请选择要赋予的权限菜单!");
+        AssertUtil.isTrue((roleId == null),"请选择要授权的角色!");
+        List<RoleMenu> roleMenus = new ArrayList<>();
+        for (Integer mid : mids) {
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.setMenuId(mid);
+            roleMenu.setRoleId(roleId);
+            roleMenus.add(roleMenu);
+        }
+        AssertUtil.isTrue(!(roleMenuService.saveBatch(roleMenus)),"授权失败！");
     }
 }

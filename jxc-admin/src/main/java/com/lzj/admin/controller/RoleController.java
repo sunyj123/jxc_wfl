@@ -89,15 +89,45 @@ public class RoleController {
         return RespBean.success("修改用户成功!");
     }
 
+    /**
+     * 删除角色
+     * @param id
+     * @return
+     */
     @RequestMapping("delete")
     @ResponseBody
     public RespBean deleteRole(Integer id){
         roleService.deleteRole(id);
         return RespBean.success("角色删除成功!");
     }
+
+    /**
+     * 查询所有的角色
+     * @param userId
+     * @return
+     */
     @RequestMapping("queryAllRoles")
     @ResponseBody
     public List<Map<String,Object>> queryAllRoles(Integer userId){
         return roleService.queryAllRoles(userId);
+    }
+
+    /**
+     * 授权页面展示
+     * @param roleId
+     * @param model
+     * @return
+     */
+    @RequestMapping("toAddGrantPage")
+    public String toAddGrantPage(Integer roleId,Model model){
+        model.addAttribute("roleId",roleId);
+        return "role/grant";
+    }
+
+    @RequestMapping("addGrant")
+    @ResponseBody
+    public RespBean addGrant(Integer mids[],Integer roleId){
+        roleService.addGrant(mids,roleId);
+        return RespBean.success("授权成功!");
     }
 }
